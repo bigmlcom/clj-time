@@ -23,13 +23,13 @@
    The date-time constructor always returns times in the UTC time zone. If you
    want a time with the specified fields in a different time zone, use
    from-time-zone:
-   
+
      => (from-time-zone (date-time 1986 10 22) (time-zone-for-offset -2))
      #<DateTime 1986-10-22T00:00:00.000-02:00>
-   
+
    If on the other hand you want a given absolute instant in time in a
    different time zone, use to-time-zone:
-   
+
      => (to-time-zone (date-time 1986 10 22) (time-zone-for-offset -2))
      #<DateTime 1986-10-21T22:00:00.000-02:00>
 
@@ -56,10 +56,10 @@
      => (within? (interval (date-time 1986) (date-time 1990))
                  (date-time 1987))
      true
-   
+
    To find the amount of time encompased by an interval, use in-secs and
    in-minutes:
-   
+
      => (in-minutes (interval (date-time 1986 10 2) (date-time 1986 10 14)))
      17280
 
@@ -67,12 +67,9 @@
    you need to print or parse date-times, see clj-time.format. If you need to
    ceorce date-times to or from other types, see clj-time.coerce."
   (:refer-clojure :exclude [extend])
-  (:use [clojure.contrib.def :only (defvar)])
   (:import (org.joda.time DateTime DateTimeZone Period Interval)))
 
-(defvar utc
-  (DateTimeZone/UTC)
-  "DateTimeZone for UTC.")
+(def ^{:doc "DateTimeZone for UTC."} utc (DateTimeZone/UTC))
 
 (defn now []
   "Returns a DateTime for the current instant in the UTC time zone."

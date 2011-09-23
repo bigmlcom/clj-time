@@ -9,24 +9,23 @@
 
    To see a list of available built-in formatters and an example of a date-time
    printed in their format:
-   
+
     (show-formatters)
-   
+
    Once you have a formatter, parsing and printing are strait-forward:
-   
+
      => (parse custom-formatter \"20100311\")
      #<DateTime 2010-03-11T00:00:00.000Z>
-   
+
      => (unparse custom-formatter (date-time 2010 10 3))
      \"20101003\"
-   
+
    By default the parse function always returns a DateTime instance with a UTC
    time zone, and the unparse function always represents a given DateTime
    instance in UTC. A formatter can be modified to different timezones, locales,
    etc with the functions with-zone, with-locale, with-chronology, and
    with-pivot-year."
   (:refer-clojure :exclude [extend])
-  (:use [clojure.contrib.def :only (defvar defvar-)])
   (:use [clojure.set :only (difference)])
   (:use clj-time.core)
   (:import (java.util Locale)
@@ -64,7 +63,10 @@
   [#^DateTimeFormatter f #^DateTimeZone dtz]
   (.withZone f dtz))
 
-(defvar formatters
+(def ^{:doc
+       "Map of ISO 8601 and a single RFC 822 formatters that can
+        be used for parsing and, in most cases, printing."}
+  formatters
   (into {} (map
     (fn [[k #^DateTimeFormatter f]] [k (.withZone f #^DateTimeZone utc)])
     {:basic-date (ISODateTimeFormat/basicDate)
@@ -118,16 +120,14 @@
      :year (ISODateTimeFormat/year)
      :year-month (ISODateTimeFormat/yearMonth)
      :year-month-day (ISODateTimeFormat/yearMonthDay)
-     :rfc822 (formatter "EEE, dd MMM yyyy HH:mm:ss Z")}))
-  "Map of ISO 8601 and a single RFC 822 formatters that can be used for parsing and, in most
-  cases, printing.")
+     :rfc822 (formatter "EEE, dd MMM yyyy HH:mm:ss Z")})))
 
-(defvar- parsers
+(def ^{:private true} parsers
   #{:date-element-parser :date-opt-time :date-parser :date-time-parser
     :local-date-opt-time :local-date :local-time :time-element-parser
     :time-parser})
 
-(defvar- printers
+(def ^{:private true} printers
   (difference (set (keys formatters)) parsers))
 
 (defn parse
